@@ -1,0 +1,217 @@
+"/":
+  get:
+    security:
+      - ApiKeyAuth: []
+    tags: ["/"]
+    description: Rota raiz da API
+    responses:
+      200:
+        $ref: "#/components/responses/RequestSuccess"
+      500:
+        $ref: "#/components/responses/Error"
+      401:
+        $ref: "#/components/responses/UnauthorizedError"
+
+"/v1/auth/login":
+  post:
+    tags: ["login"]
+    summary: Login
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/definitions/Login"
+    responses:
+      200:
+        $ref: "#/components/responses/RequestSuccess"
+      500:
+        $ref: "#/components/responses/Error"
+      401:
+        $ref: "#/components/responses/UnauthorizedError"
+
+"/v1/users":
+  get:
+    security:
+      - ApiKeyAuth: []
+    tags: ["/v1"]
+    summary: Lista de todos os usuários
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    responses:
+      200:
+        $ref: "#/components/responses/RequestSuccess"
+      500:
+        $ref: "#/components/responses/Error"
+      401:
+        $ref: "#/components/responses/UnauthorizedError"
+  post:
+    security:
+      - ApiKeyAuth: []
+    tags: ["/v1"]
+    summary: Registrar novo usuário
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/definitions/UserCreate"
+    responses:
+      200:
+        $ref: "#/components/responses/RequestSuccess"
+      500:
+        $ref: "#/components/responses/Error"
+      401:
+        $ref: "#/components/responses/UnauthorizedError"
+"/v1/users/{id}":
+  get:
+    security:
+      - ApiKeyAuth: []
+    tags: ["/v1"]
+    summary: Busca um usuário pelo id
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      200:
+        $ref: "#/components/responses/RequestSuccess"
+      500:
+        $ref: "#/components/responses/Error"
+      401:
+        $ref: "#/components/responses/UnauthorizedError"
+  put:
+    security:
+      - ApiKeyAuth: []
+    tags: ["/v1"]
+    summary: Altera os dados de um usuário existente
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/definitions/UserEdit"
+    responses:
+      200:
+        $ref: "#/components/responses/RequestSuccess"
+      500:
+        $ref: "#/components/responses/Error"
+      401:
+        $ref: "#/components/responses/UnauthorizedError"
+  delete:
+    security:
+      - ApiKeyAuth: []
+    tags: ["/v1"]
+    summary: Deletar um usuário
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      200:
+        $ref: "#/components/responses/RequestSuccess"
+      500:
+        $ref: "#/components/responses/Error"
+      401:
+        $ref: "#/components/responses/UnauthorizedError"
+
+definitions:
+  Login:
+    type: object
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+  UserCreate:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      lastName:
+        type: string
+  UserEdit:
+    type: object
+    properties:
+      name:
+        type: string
+      lastName:
+        type: string
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: TOKEN
+  security:
+    ApiKeyAuth: []
+  responses:
+    RequestSuccess:
+      description: Requisição bem sucedida
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              data:
+                type: object
+    UnauthorizedError:
+      description: Rota não autorizada
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    Error:
+      description: Ocorreu algum erro na requisição
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              error:
+                type: string
