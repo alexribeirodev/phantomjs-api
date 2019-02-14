@@ -1,19 +1,14 @@
 import express = require("express");
 //Controllers
-import { UserController } from "../../controllers/v1/users.controller";
-import { AuthController } from "../../controllers/v1/auth.controller";
-
-//Middlewares
-import { AuthMiddleware } from "../../middleware/auth.middleware";
+import { WebprintController } from '../../controllers/v1/webprint.controller';
 
 export class RoutesV1 {
   private routes: express.Router;
   private paths: {
-    users?;
-    auth?;
+    webprint?: string;
   };
   constructor() {
-    this.paths = { users: "/users", auth: "/auth" };
+    this.paths = { webprint: "/generate" };
     this.routes = express.Router();
   }
 
@@ -32,16 +27,9 @@ export class RoutesV1 {
       }
     );
 
-    // User routes
-    this.routes.use(`${this.paths.users}`, AuthMiddleware.validToken);
-    this.routes.get(`${this.paths.users}`, UserController.getAll);
-    this.routes.get(`${this.paths.users}/:id`, UserController.getById);
-    this.routes.post(`${this.paths.users}`, UserController.create);
-    this.routes.put(`${this.paths.users}/:id`, UserController.edit);
-    this.routes.delete(`${this.paths.users}/:id`, UserController.delete);
-
-    //Auth routes
-    this.routes.post(`${this.paths.auth}/login`, AuthController.login);
+    //Webprint routes
+    this.routes.get(`${this.paths.webprint}`, WebprintController.generate);
+    this.routes.post(`${this.paths.webprint}`, WebprintController.generate);
 
     return this.routes;
   }

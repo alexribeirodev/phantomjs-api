@@ -67,7 +67,7 @@ function clientErrorHandler(err, req, res, next) {
     }
 }
 function errorHandler(err, req, res, next) {
-    ExpressResponseDefault_1.ExpressResponseDefault.code500(err, req, res, next);
+    ExpressResponseDefault_1.ExpressResponseDefault.code500(err.message, req, res, next);
 }
 exports.default = server_1.default;
 //# sourceMappingURL=index.js.map

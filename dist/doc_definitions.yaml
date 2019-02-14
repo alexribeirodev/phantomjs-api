@@ -12,136 +12,52 @@
       401:
         $ref: "#/components/responses/UnauthorizedError"
 
-"/v1/auth/login":
-  post:
-    tags: ["login"]
-    summary: Login
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    requestBody:
-      content:
-        application/json:
-          schema:
-            $ref: "#/definitions/Login"
-    responses:
-      200:
-        $ref: "#/components/responses/RequestSuccess"
-      500:
-        $ref: "#/components/responses/Error"
-      401:
-        $ref: "#/components/responses/UnauthorizedError"
-
-"/v1/users":
+"/v1/generate":
   get:
-    security:
-      - ApiKeyAuth: []
-    tags: ["/v1"]
-    summary: Lista de todos os usuários
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    responses:
-      200:
-        $ref: "#/components/responses/RequestSuccess"
-      500:
-        $ref: "#/components/responses/Error"
-      401:
-        $ref: "#/components/responses/UnauthorizedError"
-  post:
-    security:
-      - ApiKeyAuth: []
-    tags: ["/v1"]
-    summary: Registrar novo usuário
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    requestBody:
-      content:
-        application/json:
-          schema:
-            $ref: "#/definitions/UserCreate"
-    responses:
-      200:
-        $ref: "#/components/responses/RequestSuccess"
-      500:
-        $ref: "#/components/responses/Error"
-      401:
-        $ref: "#/components/responses/UnauthorizedError"
-"/v1/users/{id}":
-  get:
-    security:
-      - ApiKeyAuth: []
-    tags: ["/v1"]
-    summary: Busca um usuário pelo id
+    tags: ["Webshot"]
+    summary: Webshot
     consumes:
       - application/json
     produces:
       - application/json
     parameters:
-      - name: id
-        in: path
-        description: User ID
+      - name: url
+        in: query
+        description: URL que será gerada a imagem.
         required: true
         schema:
-          type: integer
-          format: int64
-    responses:
-      200:
-        $ref: "#/components/responses/RequestSuccess"
-      500:
-        $ref: "#/components/responses/Error"
-      401:
-        $ref: "#/components/responses/UnauthorizedError"
-  put:
-    security:
-      - ApiKeyAuth: []
-    tags: ["/v1"]
-    summary: Altera os dados de um usuário existente
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    parameters:
-      - name: id
-        in: path
-        description: User ID
-        required: true
+          type: string
+      - name: width
+        in: query
+        description: Largura da imagem a ser gerada. Por padrão é 1024.
+        schema:
+          type: string
+      - name: height
+        in: query
+        description: Altura da imagem a ser gerada. Por padrão é 768.
+        schema:
+          type: string
+      - name: delay
+        in: query
+        description: Delay em segundos para aguardar carregamento da pagina web.
         schema:
           type: integer
-          format: int64
-    requestBody:
-      content:
-        application/json:
-          schema:
-            $ref: "#/definitions/UserEdit"
-    responses:
-      200:
-        $ref: "#/components/responses/RequestSuccess"
-      500:
-        $ref: "#/components/responses/Error"
-      401:
-        $ref: "#/components/responses/UnauthorizedError"
-  delete:
-    security:
-      - ApiKeyAuth: []
-    tags: ["/v1"]
-    summary: Deletar um usuário
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    parameters:
-      - name: id
-        in: path
-        description: User ID
-        required: true
+      - name: format
+        in: query
+        description: Tipo de compressão da imagem. Por padrão é png.
         schema:
-          type: integer
-          format: int64
+          type: string
+          enum:
+            - "png"
+            - "jpg"
+      - name: crop
+        in: query
+        description: Cortar imagem
+        schema:
+          type: string
+          enum:
+            - "true"
+            - "false"
     responses:
       200:
         $ref: "#/components/responses/RequestSuccess"
@@ -151,13 +67,6 @@
         $ref: "#/components/responses/UnauthorizedError"
 
 definitions:
-  Login:
-    type: object
-    properties:
-      login:
-        type: string
-      password:
-        type: string
   UserCreate:
     type: object
     properties:
@@ -176,13 +85,14 @@ definitions:
         type: string
 
 components:
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
-  security:
-    ApiKeyAuth: []
+  parameters:
+    UrlGenerate:
+      name: url
+      in: query
+      description: URL que será gerada a imagem
+      required: true
+      schema:
+        type: string
   responses:
     RequestSuccess:
       description: Requisição bem sucedida

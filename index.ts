@@ -92,7 +92,7 @@ function errorHandler(
   res: express.Response,
   next: express.NextFunction
 ) {
-  ExpressResponseDefault.code500(err, req, res, next);
+  ExpressResponseDefault.code500(err.message, req, res, next);
 }
 
 export default App;

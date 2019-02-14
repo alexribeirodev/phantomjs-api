@@ -2,13 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 //Controllers
-const users_controller_1 = require("../../controllers/v1/users.controller");
-const auth_controller_1 = require("../../controllers/v1/auth.controller");
-//Middlewares
-const auth_middleware_1 = require("../../middleware/auth.middleware");
+const webprint_controller_1 = require("../../controllers/v1/webprint.controller");
 class RoutesV1 {
     constructor() {
-        this.paths = { users: "/users", auth: "/auth" };
+        this.paths = { webprint: "/generate" };
         this.routes = express.Router();
     }
     getRoutes() {
@@ -18,15 +15,9 @@ class RoutesV1 {
                 version: "v1 route"
             });
         });
-        // User routes
-        this.routes.use(`${this.paths.users}`, auth_middleware_1.AuthMiddleware.validToken);
-        this.routes.get(`${this.paths.users}`, users_controller_1.UserController.getAll);
-        this.routes.get(`${this.paths.users}/:id`, users_controller_1.UserController.getById);
-        this.routes.post(`${this.paths.users}`, users_controller_1.UserController.create);
-        this.routes.put(`${this.paths.users}/:id`, users_controller_1.UserController.edit);
-        this.routes.delete(`${this.paths.users}/:id`, users_controller_1.UserController.delete);
-        //Auth routes
-        this.routes.post(`${this.paths.auth}/login`, auth_controller_1.AuthController.login);
+        //Webprint routes
+        this.routes.get(`${this.paths.webprint}`, webprint_controller_1.WebprintController.generate);
+        this.routes.post(`${this.paths.webprint}`, webprint_controller_1.WebprintController.generate);
         return this.routes;
     }
 }
