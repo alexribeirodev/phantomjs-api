@@ -1,7 +1,5 @@
 "/":
   get:
-    security:
-      - ApiKeyAuth: []
     tags: ["/"]
     description: Rota raiz da API
     responses:
@@ -14,7 +12,7 @@
 
 "/v1/generate":
   get:
-    tags: ["Webshot"]
+    tags: ["webshot"]
     summary: Webshot
     consumes:
       - application/json
@@ -52,12 +50,69 @@
             - "jpg"
       - name: crop
         in: query
-        description: Cortar imagem
+        description: Cortar imagem.
         schema:
           type: string
           enum:
             - "true"
             - "false"
+      - name: username
+        in: query
+        description: Usuário para autenticação com HTTP auth.
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: Senha para autenticação com HTTP auth.
+        schema:
+          type: string
+      - name: scale
+        in: query
+        description: Escalar a webpage n vezes. Padão é 1.
+        schema:
+          type: number
+      - name: userAgent
+        in: query
+        description: Define um user agent customizado.
+        schema:
+          type: string
+      - name: transparent
+        in: query
+        description: Definie a cor do background como transparente ao invés de branco.
+        schema:
+          type: string
+          enum:
+            - "true"
+            - "false"
+      - name: selector
+        in: query
+        description: Captura um elemento DOM específico.
+        schema:
+          type: string
+      - name: script
+        in: query
+        description: Aplica um Javascript customizado à página web. Especificar algum Javascript ou um caminho para um arquivo.
+        schema:
+          type: string
+    responses:
+      200:
+        $ref: "#/components/responses/RequestSuccess"
+      500:
+        $ref: "#/components/responses/Error"
+      401:
+        $ref: "#/components/responses/UnauthorizedError"
+  post:
+    tags: ["webshot"]
+    summary: Webshot
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/definitions/ObjectRequest"
     responses:
       200:
         $ref: "#/components/responses/RequestSuccess"
@@ -67,22 +122,66 @@
         $ref: "#/components/responses/UnauthorizedError"
 
 definitions:
-  UserCreate:
+  ObjectRequest:
     type: object
     properties:
-      id:
-        type: integer
-      name:
+      url:
         type: string
-      lastName:
+        required: true
+      width:
         type: string
-  UserEdit:
-    type: object
-    properties:
-      name:
+      height:
         type: string
-      lastName:
+      crop:
+        type: boolean
+      delay:
         type: string
+      timeout:
+        type: string
+      selector:
+        type: string
+      css:
+        type: string
+      script:
+        type: string
+      hide:
+        type: array
+      headers:
+        type: object
+      cookies:
+        type: object
+      username:
+        type: string
+      password:
+        type: string
+      format:
+        type: string
+        enum:
+          - "png"
+          - "jpg"
+      scale:
+        type: number
+      userAgent:
+        type: string
+      transparent:
+        type: boolean
+      redirect:
+        type: object
+        properties:
+          url:
+            type: string
+          method:
+            type: string
+          headers:
+            type: object
+          customKey:
+            type: string
+          customObject:
+            type: object
+    example:
+      url: http://google.com/
+      width: 1024
+      height: 768
 
 components:
   parameters:

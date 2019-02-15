@@ -1,6 +1,15 @@
 import { ExpressResponseDefault } from "../../../utils/ExpressResponseDefault";
 import express = require("express");
 import { Webshot, WebshotConfig } from "../../../utils/Webshot";
+import * as request from "request";
+
+interface RedirectInterface {
+  url: string;
+  method: string;
+  headers?: object;
+  customKey?: string;
+  customObject?: object;
+}
 
 export class WebprintController {
   constructor() {}
@@ -39,9 +48,43 @@ export class WebprintController {
       webshot
         .generate(config)
         .then((base64: string) => {
-          ExpressResponseDefault.code200(req, res, next, {
-            base64
-          });
+          if (!("redirect" in data)) {
+            ExpressResponseDefault.code200(req, res, next, {
+              base64
+            });
+          } else {
+            let redirect: RedirectInterface = data;
+            let obj = {};
+
+            if (redirect.customObject) {
+              obj = redirect.customObject;
+            }
+
+            if (redirect.customKey) {
+              obj[redirect.customKey] = base64;
+            } else {
+              obj["base64"] = base64;
+            }
+
+            request(
+              {
+                uri: redirect.url,
+                method: redirect.method,
+                headers: redirect.headers || {},
+                body: obj
+              },
+              (err, response, body) => {
+                if (err) {
+                  next(err);
+                }
+
+                ExpressResponseDefault.code200(req, res, next, {
+                  redirect: true,
+                  base64
+                });
+              }
+            );
+          }
         })
         .catch(err => {
           next(new Error(err));
