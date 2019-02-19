@@ -1,6 +1,7 @@
 import express = require("express");
 //Controllers
 import { WebprintController } from '../../controllers/v1/webprint.controller';
+import config from "../../../config";
 
 export class RoutesV1 {
   private routes: express.Router;
@@ -30,6 +31,7 @@ export class RoutesV1 {
     //Webprint routes
     this.routes.get(`${this.paths.webprint}`, WebprintController.generate);
     this.routes.post(`${this.paths.webprint}`, WebprintController.generate);
+    this.routes.post(`${this.paths.webprint + "/teste"}`, WebprintController.teste);
 
     return this.routes;
   }

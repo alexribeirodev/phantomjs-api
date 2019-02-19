@@ -53,7 +53,7 @@ export class WebprintController {
               base64
             });
           } else {
-            let redirect: RedirectInterface = data;
+            let redirect: RedirectInterface = data.redirect;
             let obj = {};
 
             if (redirect.customObject) {
@@ -68,18 +68,22 @@ export class WebprintController {
 
             request(
               {
-                uri: redirect.url,
-                method: redirect.method,
+                url: redirect.url,
+                method: "post",
                 headers: redirect.headers || {},
-                body: obj
+                body: obj,
+                json: true
               },
               (err, response, body) => {
                 if (err) {
                   next(err);
                 }
 
+                console.log(redirect.url, body);
+
                 ExpressResponseDefault.code200(req, res, next, {
                   redirect: true,
+                  result: body,
                   base64
                 });
               }
@@ -90,5 +94,23 @@ export class WebprintController {
           next(new Error(err));
         });
     }
+  }
+
+  static teste(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    let obj = {
+      body: req.body,
+      query: req.query,
+      headers: req.headers
+    };
+
+    console.log("Teste", obj);
+
+    ExpressResponseDefault.code200(req, res, next, {
+      obj
+    });
   }
 }

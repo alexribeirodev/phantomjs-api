@@ -3,7 +3,8 @@ import express = require("express");
 import * as logger from "morgan";
 import * as bodyParser from "body-parser";
 import * as helmet from "helmet";
-import CustomApplication from '../custom/interfaces/application.interface';
+import CustomApplication from "../custom/interfaces/application.interface";
+import config from "../config";
 
 // Criando as configurações para o ExpressJS
 class App {
@@ -19,8 +20,10 @@ class App {
   // Configuração para o nosso middleware
   private middleware(): void {
     this.express.use(logger("combined"));
-    this.express.use(bodyParser.json());
-    this.express.use(bodyParser.urlencoded({ extended: false }));
+    this.express.use(bodyParser.json({ limit: "500mb" }));
+    this.express.use(
+      bodyParser.urlencoded({ extended: false, limit: "500mb" })
+    );
     this.express.use(helmet());
     this.express.use(this.methodOption);
     this.express.disable("etag");
@@ -35,7 +38,10 @@ class App {
     router.get("/", (req, res, next) => {
       res.json({
         version: process.env.npm_package_version,
-        message: process.env.npm_package_description
+        message: process.env.npm_package_description,
+        docs: `/docs`,
+        "stats-ui": `${config.SWG_STATS_ROUTE}/ui`,
+        stats: `${config.SWG_STATS_ROUTE}/stats`
       });
     });
     this.express.use("/", router);
